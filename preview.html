@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission 2070: Climate Mitigation Explorer</title>
+  <style>
+    :root {
+      --bg: #071923;
+      --bg2: #0d2733;
+      --panel: #102f3f;
+      --panel2: #153b4e;
+      --ink: #eefcff;
+      --muted: #b8d7dd;
+      --accent: #7cf7c4;
+      --accent2: #7dc8ff;
+      --accent3: #ffd166;
+      --accent4: #ff8ba7;
+      --deep: #05202b;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.13);
+      --shadow: 0 18px 45px rgba(0,0,0,.28);
+      --radius: 22px;
+      --focus: 0 0 0 4px rgba(255,209,102,.55);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(124,247,196,.22), transparent 32rem),
+        radial-gradient(circle at top right, rgba(125,200,255,.18), transparent 30rem),
+        linear-gradient(145deg, var(--bg), var(--bg2) 55%, #0c1f24);
+      color: var(--ink);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    a { color: var(--accent2); }
+    a:hover { color: var(--accent3); }
+    button, a, input { font: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: none; box-shadow: var(--focus); }
+
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--accent3);
+      color: #182328;
+      padding: .65rem .9rem;
+      border-radius: 999px;
+      z-index: 1000;
+      font-weight: 800;
+    }
+    .skip-link:focus { top: 1rem; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(7,25,35,.72);
+      border-bottom: 1px solid rgba(255,255,255,.12);
+    }
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .7rem 1.1rem;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 900;
+      letter-spacing: .01em;
+      white-space: nowrap;
+    }
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #073044;
+      box-shadow: 0 8px 24px rgba(124,247,196,.24);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: .92rem;
+      padding: .5rem .7rem;
+      border-radius: 999px;
+    }
+    .nav a:hover, .nav a.active {
+      color: #061e29;
+      background: var(--accent);
+    }
+
+    header.hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 5rem 1.1rem 2rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(300px, .92fr);
+      gap: 2rem;
+      align-items: center;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: .55rem;
+      align-items: center;
+      padding: .45rem .75rem;
+      border-radius: 999px;
+      background: rgba(124,247,196,.12);
+      border: 1px solid rgba(124,247,196,.28);
+      color: var(--accent);
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    h1, h2, h3 { line-height: 1.1; margin: 0; }
+    h1 {
+      font-size: clamp(2.5rem, 8vw, 5.6rem);
+      letter-spacing: -.06em;
+      max-width: 10ch;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, #ffffff, var(--accent), var(--accent2), var(--accent3));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p.lede {
+      font-size: clamp(1.1rem, 2.1vw, 1.45rem);
+      color: #d8f4f8;
+      max-width: 66ch;
+      margin: 1.1rem 0 1.3rem;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-top: 1.3rem;
+    }
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: .8rem 1rem;
+      font-weight: 900;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      transition: transform .18s ease, background .18s ease, color .18s ease, border .18s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: #062634; box-shadow: 0 13px 28px rgba(124,247,196,.18); }
+    .btn-secondary { background: rgba(255,255,255,.08); color: var(--ink); border: 1px solid rgba(255,255,255,.15); }
+    .btn-ghost { background: transparent; color: var(--accent2); border: 1px solid rgba(125,200,255,.35); }
+
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.07));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 32px;
+      box-shadow: var(--shadow);
+      padding: 1.1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card:before {
+      content: "";
+      position: absolute;
+      inset: -35% -20% auto auto;
+      width: 280px;
+      height: 280px;
+      border-radius: 999px;
+      background: rgba(124,247,196,.17);
+      filter: blur(18px);
+    }
+    .planet {
+      aspect-ratio: 1 / 1;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.9) 0 2%, transparent 2.3%),
+        radial-gradient(circle at 63% 26%, rgba(255,255,255,.8) 0 1.5%, transparent 1.8%),
+        radial-gradient(circle at 35% 78%, rgba(255,255,255,.6) 0 1.2%, transparent 1.6%),
+        radial-gradient(circle at 50% 50%, #2ab7ca 0 37%, transparent 38%),
+        radial-gradient(circle at 50% 50%, rgba(124,247,196,.7) 0 41%, transparent 42%),
+        radial-gradient(circle at 50% 50%, rgba(125,200,255,.2) 0 49%, transparent 50%),
+        linear-gradient(145deg, #08313f, #071923);
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 340px;
+    }
+    .planet svg { width: 86%; max-width: 420px; filter: drop-shadow(0 24px 35px rgba(0,0,0,.28)); }
+    .floating-label {
+      position: absolute;
+      padding: .55rem .75rem;
+      background: rgba(5,32,43,.82);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      color: #eafcff;
+      font-weight: 850;
+      box-shadow: 0 14px 26px rgba(0,0,0,.18);
+      font-size: .88rem;
+    }
+    .float-water { left: 1rem; top: 1.2rem; }
+    .float-energy { right: 1rem; top: 39%; }
+    .float-farm { left: 1.5rem; bottom: 1.4rem; }
+
+    main { max-width: var(--max); margin: 0 auto; padding: 0 1.1rem 4rem; }
+    section { scroll-margin-top: 88px; }
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin: 3.2rem 0 1.2rem;
+    }
+    .section-head h2 { font-size: clamp(1.8rem, 4vw, 3.25rem); letter-spacing: -.04em; }
+    .section-head p { margin: .35rem 0 0; color: var(--muted); max-width: 65ch; }
+
+    .report-box {
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.07));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: var(--shadow);
+      padding: clamp(1.1rem, 3vw, 1.7rem);
+    }
+    .report-box strong { color: white; }
+    .mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+    .mini-card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 1rem;
+    }
+    .mini-card h3 { font-size: 1.05rem; display:flex; align-items:center; gap:.45rem; }
+    .mini-card p { color: var(--muted); margin: .6rem 0 0; }
+
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .mission-card {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.075));
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 26px;
+      padding: 1.25rem;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 14px 30px rgba(0,0,0,.18);
+    }
+    .mission-card:before {
+      content: "";
+      position: absolute;
+      inset: auto -20% -35% auto;
+      width: 190px;
+      height: 190px;
+      border-radius: 999px;
+      background: rgba(125,200,255,.16);
+      filter: blur(10px);
+    }
+    .mission-card:nth-child(2):before { background: rgba(255,209,102,.2); }
+    .mission-card:nth-child(3):before { background: rgba(124,247,196,.18); }
+    .mission-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: rgba(255,255,255,.12);
+      font-size: 1.8rem;
+    }
+    .mission-card h3 { font-size: 1.5rem; margin-top: .75rem; }
+    .mission-card p { color: var(--muted); margin: .75rem 0 1rem; }
+    .mission-card .btn { align-self: flex-start; }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      margin: 1rem 0;
+    }
+    .tab-btn {
+      border: 1px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.08);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: .65rem .9rem;
+      cursor: pointer;
+      font-weight: 900;
+    }
+    .tab-btn.active {
+      background: var(--accent3);
+      color: #222916;
+      border-color: transparent;
+    }
+    .mission-panel {
+      display: none;
+      animation: fadeIn .25s ease both;
+    }
+    .mission-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .panel-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(290px, .8fr);
+      gap: 1rem;
+      align-items: start;
+    }
+    .solution-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+    .solution {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: .95rem;
+      cursor: pointer;
+      min-height: 150px;
+      transition: transform .18s ease, background .18s ease, border .18s ease;
+    }
+    .solution:hover { transform: translateY(-2px); background: rgba(255,255,255,.12); }
+    .solution.selected { border-color: var(--accent); background: rgba(124,247,196,.12); }
+    .solution h4 { margin: 0; font-size: 1rem; }
+    .solution p { margin: .45rem 0 0; color: var(--muted); font-size: .95rem; }
+    .side-note {
+      background: var(--deep);
+      border: 1px solid rgba(124,247,196,.19);
+      border-radius: 22px;
+      padding: 1rem;
+      position: sticky;
+      top: 92px;
+    }
+    .side-note h3 { font-size: 1.2rem; }
+    .meter {
+      margin-top: 1rem;
+      background: rgba(255,255,255,.1);
+      border-radius: 999px;
+      height: 16px;
+      overflow: hidden;
+    }
+    .meter span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .3s ease;
+    }
+    .meter-label { display:flex; justify-content:space-between; color:var(--muted); font-size:.9rem; margin-top:.45rem; }
+
+    .timeline {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+    .time-card {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      padding: 1rem;
+      min-height: 210px;
+    }
+    .time-card .year {
+      font-size: 2rem;
+      font-weight: 1000;
+      color: var(--accent3);
+      letter-spacing: -.05em;
+    }
+    .time-card ul { margin: .6rem 0 0; padding-left: 1.1rem; color: var(--muted); }
+
+    .simulator {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, .7fr);
+      gap: 1rem;
+      align-items: stretch;
+    }
+    .slider-row {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 1rem;
+      margin-bottom: .75rem;
+    }
+    .slider-head { display:flex; justify-content:space-between; gap:1rem; align-items:center; margin-bottom:.6rem; }
+    .slider-head label { font-weight: 900; }
+    .slider-value { color: var(--accent3); font-weight: 1000; }
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+    .score-card {
+      min-height: 100%;
+      background: linear-gradient(160deg, rgba(124,247,196,.15), rgba(125,200,255,.12));
+      border: 1px solid rgba(124,247,196,.2);
+      border-radius: 24px;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+    .score-number {
+      font-size: clamp(3rem, 8vw, 5rem);
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -.07em;
+      color: white;
+      margin: .25rem 0;
+    }
+    .score-card p { color: var(--muted); margin: .45rem 0; }
+    .badge-row { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin-top: .75rem; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 999px;
+      padding: .35rem .55rem;
+      font-size: .85rem;
+      color: #eaffff;
+      font-weight: 800;
+    }
+
+    .quiz-card {
+      background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.07));
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 26px;
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
+    }
+    .question {
+      display: none;
+    }
+    .question.active { display: block; animation: fadeIn .2s ease both; }
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .7rem;
+      margin-top: 1rem;
+    }
+    .answer {
+      background: rgba(255,255,255,.08);
+      color: var(--ink);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 16px;
+      padding: .85rem;
+      text-align: left;
+      cursor: pointer;
+      min-height: 78px;
+    }
+    .answer.correct { background: rgba(124,247,196,.18); border-color: var(--accent); }
+    .answer.wrong { background: rgba(255,139,167,.18); border-color: var(--accent4); }
+    .quiz-feedback {
+      min-height: 2.8rem;
+      margin-top: .75rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .quiz-controls { display:flex; justify-content:space-between; gap:.75rem; flex-wrap:wrap; margin-top: 1rem; }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .media-card {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #03131b;
+    }
+    iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .media-card .content { padding: 1rem; }
+    .media-card h3 { font-size: 1.08rem; }
+    .media-card p { color: var(--muted); margin: .5rem 0 .8rem; }
+
+    details {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: .9rem 1rem;
+      margin: .65rem 0;
+    }
+    summary { cursor: pointer; font-weight: 900; color: #fff; }
+    details p { color: var(--muted); margin-bottom: .2rem; }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .8rem;
+      margin-top: 1rem;
+    }
+    .source-link {
+      display: block;
+      text-decoration: none;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: .9rem;
+      color: var(--ink);
+      transition: transform .18s ease, background .18s ease;
+    }
+    .source-link:hover { transform: translateY(-2px); background: rgba(255,255,255,.12); color: var(--ink); }
+    .source-link span { display: block; color: var(--muted); font-size: .9rem; margin-top: .25rem; }
+
+    .callout {
+      background: linear-gradient(135deg, rgba(255,209,102,.16), rgba(255,139,167,.11));
+      border: 1px solid rgba(255,209,102,.24);
+      border-radius: 24px;
+      padding: 1.2rem;
+      margin-top: 1rem;
+    }
+    .callout h3 { font-size: 1.35rem; }
+    .callout p { color: #f5eef0; }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 3rem 1rem 2rem;
+      border-top: 1px solid rgba(255,255,255,.1);
+      margin-top: 3rem;
+    }
+
+    @media (max-width: 920px) {
+      header.hero, .panel-layout, .simulator { grid-template-columns: 1fr; }
+      .mission-grid, .mini-grid, .timeline, .media-grid { grid-template-columns: repeat(2, 1fr); }
+      .side-note { position: static; }
+      h1 { max-width: 14ch; }
+    }
+    @media (max-width: 680px) {
+      .topbar-inner { align-items: flex-start; flex-direction: column; }
+      .nav { justify-content: flex-start; }
+      .mission-grid, .mini-grid, .timeline, .media-grid, .solution-list, .answer-grid, .source-grid { grid-template-columns: 1fr; }
+      header.hero { padding-top: 2.5rem; }
+      .planet { min-height: 270px; }
+      .floating-label { font-size: .78rem; }
+      .section-head { display: block; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to report</a>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="Mission 2070 home"><span class="brand-icon">2070</span><span>Climate Explorer</span></a>
+      <nav class="nav" aria-label="Page sections">
+        <a href="#briefing">Briefing</a>
+        <a href="#missions">Missions</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#simulator">Simulator</a>
+        <a href="#quiz">Quiz</a>
+        <a href="#media">Media</a>
+        <a href="#sources">Sources</a>
+      </nav>
+    </div>
+  </div>
+
+  <header class="hero" id="top">
+    <div>
+      <div class="eyebrow">🛰️ Field report for curious climate problem-solvers</div>
+      <h1><span class="gradient-text">Mission 2070</span></h1>
+      <p class="lede">A fun, interactive report about practical climate mitigations society could scale up by 2070 in clean water, renewable energy, and alternative agriculture.</p>
+      <p>Climate mitigation means lowering the gases that heat the planet, especially carbon dioxide, methane, and nitrous oxide. Some solutions are super high-tech. Others are almost suspiciously normal: fix leaks, stop wasting food, protect wetlands, and make electricity cleaner.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#missions">Start exploring</a>
+        <a class="btn btn-secondary" href="#simulator">Try the future simulator</a>
+      </div>
+    </div>
+    <div class="hero-card" aria-label="Illustration of Earth with climate solution labels">
+      <div class="planet">
+        <svg viewBox="0 0 520 520" role="img" aria-label="Stylized planet with water, renewable energy, and farms">
+          <defs>
+            <linearGradient id="ocean" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#2dd4bf" offset="0" />
+              <stop stop-color="#2563eb" offset="1" />
+            </linearGradient>
+            <linearGradient id="land" x1="0" x2="1" y1="0" y2="1">
+              <stop stop-color="#b7f7a2" offset="0" />
+              <stop stop-color="#2f9e44" offset="1" />
+            </linearGradient>
+          </defs>
+          <circle cx="260" cy="260" r="188" fill="url(#ocean)" />
+          <path d="M126 227c40-44 96-62 141-38 28 14 28 48-4 58-35 11-45 27-28 48 21 25 8 63-31 61-55-3-112-61-78-129Z" fill="url(#land)" opacity=".95"/>
+          <path d="M303 127c47 14 90 52 116 99-33 19-61 15-76-8-12-19-42-19-50-42-7-20 3-34 10-49Z" fill="url(#land)" opacity=".92"/>
+          <path d="M321 313c29-22 76-20 107 1-28 57-76 98-135 117-16-38-8-90 28-118Z" fill="url(#land)" opacity=".94"/>
+          <circle cx="260" cy="260" r="202" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="11"/>
+          <circle cx="260" cy="260" r="224" fill="none" stroke="rgba(124,247,196,.20)" stroke-width="22"/>
+          <g transform="translate(105 336)">
+            <rect x="0" y="28" width="132" height="44" rx="9" fill="#14532d" />
+            <path d="M0 29h132" stroke="#7cf7c4" stroke-width="5" />
+            <path d="M17 70V26M47 70V26M77 70V26M107 70V26" stroke="#c8ffdf" stroke-width="4" opacity=".8" />
+          </g>
+          <g transform="translate(316 106)">
+            <circle cx="32" cy="32" r="31" fill="#ffd166" opacity=".95"/>
+            <path d="M32-10v16M32 58v16M-10 32H6M58 32h16M2 2l12 12M50 50l12 12M62 2 50 14M14 50 2 62" stroke="#ffd166" stroke-width="6" stroke-linecap="round" />
+          </g>
+          <g transform="translate(356 234)">
+            <path d="M42 1v116" stroke="#eaffff" stroke-width="8" stroke-linecap="round"/>
+            <path d="M42 18 6 38M42 18l36 20M42 18v-40" stroke="#eaffff" stroke-width="7" stroke-linecap="round"/>
+            <circle cx="42" cy="18" r="8" fill="#7dc8ff"/>
+          </g>
+        </svg>
+        <div class="floating-label float-water">💧 Clean water systems</div>
+        <div class="floating-label float-energy">⚡ Renewable power</div>
+        <div class="floating-label float-farm">🌱 Future farms</div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="briefing">
+      <div class="section-head">
+        <div>
+          <h2>Mission briefing</h2>
+          <p>Here is the big idea before you launch into the sections.</p>
+        </div>
+      </div>
+      <div class="report-box">
+        <p><strong>By 2070, society could be running many daily systems very differently.</strong> The goal is not one magic invention. It is a team of solutions: cleaner electricity, smarter water systems, and farms that feed people while releasing less planet-warming pollution.</p>
+        <p>The most realistic future mixes three strategies: <strong>avoid emissions</strong> by replacing fossil fuels, <strong>cut waste</strong> so fewer resources are needed, and <strong>restore natural systems</strong> that help store carbon and protect communities. The key word is <em>scale</em>: a technology can exist today, but it only changes the climate when cities, countries, businesses, and people use it widely and fairly.</p>
+        <div class="mini-grid" aria-label="Three climate strategy cards">
+          <article class="mini-card">
+            <h3>🧯 Avoid</h3>
+            <p>Use less fossil fuel by switching to solar, wind, geothermal, efficient machines, and electric transportation.</p>
+          </article>
+          <article class="mini-card">
+            <h3>🔁 Reuse</h3>
+            <p>Treat wastewater, recycle nutrients, repair leaks, and stop wasting food before it becomes methane-producing trash.</p>
+          </article>
+          <article class="mini-card">
+            <h3>🌍 Restore</h3>
+            <p>Protect wetlands, rivers, soils, forests, and coastal ecosystems so they store carbon and buffer floods and heat.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="missions">
+      <div class="section-head">
+        <div>
+          <h2>Choose a mission zone</h2>
+          <p>Each zone includes achievable mitigations that could be much bigger by 2070. Click solution cards to fill your mission meter.</p>
+        </div>
+      </div>
+      <div class="mission-grid" aria-label="Mission zone links">
+        <article class="mission-card">
+          <div>
+            <div class="mission-icon">💧</div>
+            <h3>Clean Water</h3>
+            <p>Make water systems less polluting while keeping people healthier and safer during droughts, floods, and heat waves.</p>
+          </div>
+          <a class="btn btn-ghost" href="#mission-panels" data-open-tab="water">Explore water</a>
+        </article>
+        <article class="mission-card">
+          <div>
+            <div class="mission-icon">⚡</div>
+            <h3>Renewable Energy</h3>
+            <p>Build a cleaner power system that supports homes, transportation, farms, factories, and water treatment.</p>
+          </div>
+          <a class="btn btn-ghost" href="#mission-panels" data-open-tab="energy">Explore energy</a>
+        </article>
+        <article class="mission-card">
+          <div>
+            <div class="mission-icon">🌱</div>
+            <h3>Alternative Agriculture</h3>
+            <p>Grow food with less methane, nitrous oxide, land pressure, water stress, and waste.</p>
+          </div>
+          <a class="btn btn-ghost" href="#mission-panels" data-open-tab="agriculture">Explore farms</a>
+        </article>
+      </div>
+
+      <div id="mission-panels" class="report-box" style="margin-top:1rem;">
+        <div class="tabs" role="tablist" aria-label="Mission panels">
+          <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="water-panel" id="water-tab" data-tab="water">💧 Clean Water</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="energy-panel" id="energy-tab" data-tab="energy">⚡ Renewable Energy</button>
+          <button class="tab-btn" role="tab" aria-selected="false" aria-controls="agriculture-panel" id="agriculture-tab" data-tab="agriculture">🌱 Alternative Agriculture</button>
+        </div>
+
+        <article class="mission-panel active" id="water-panel" role="tabpanel" aria-labelledby="water-tab" data-panel="water">
+          <div class="panel-layout">
+            <div>
+              <h3>Clean Water: the hidden climate hero</h3>
+              <p>Water may not sound like a climate mitigation topic at first. But moving, heating, cleaning, and treating water uses energy. Wastewater can also release methane and nitrous oxide. By 2070, clean water systems could become climate-smart lifelines.</p>
+              <div class="solution-list" data-meter="water">
+                <button class="solution" data-points="18"><h4>🔧 Fix leaks and waste</h4><p>Smart sensors can find broken pipes fast. Efficient homes and factories need less pumped and heated water.</p></button>
+                <button class="solution" data-points="20"><h4>☀️ Power treatment with renewables</h4><p>Solar, wind, batteries, and microgrids can help water plants run with fewer fossil fuels.</p></button>
+                <button class="solution" data-points="22"><h4>🧪 Turn wastewater into resources</h4><p>Cleaner treatment can capture methane as biogas and recover nutrients such as nitrogen and phosphorus.</p></button>
+                <button class="solution" data-points="18"><h4>🔁 Reuse water safely</h4><p>Recycled water can irrigate parks and crops, refill aquifers, cool buildings, or even become drinking water after advanced treatment.</p></button>
+                <button class="solution" data-points="12"><h4>🧠 Use smart pumps</h4><p>Digital controls can pump water when clean energy is plentiful and avoid wasting power at peak times.</p></button>
+                <button class="solution" data-points="10"><h4>🦆 Restore wetlands</h4><p>Healthy wetlands filter water, store carbon in soils, protect against floods, and provide wildlife habitat.</p></button>
+              </div>
+            </div>
+            <aside class="side-note" aria-live="polite">
+              <h3>Water mission meter</h3>
+              <p>Click solution cards to build a 2070-ready water system.</p>
+              <div class="meter"><span id="water-meter"></span></div>
+              <div class="meter-label"><span>Start</span><span id="water-score">0%</span></div>
+              <p id="water-note">Your city is still leaky and fossil-powered. Start upgrading!</p>
+            </aside>
+          </div>
+        </article>
+
+        <article class="mission-panel" id="energy-panel" role="tabpanel" aria-labelledby="energy-tab" data-panel="energy">
+          <div class="panel-layout">
+            <div>
+              <h3>Renewable Energy: the power-up mission</h3>
+              <p>Clean electricity is the backbone of many other solutions. If electricity is mostly zero-carbon, then electric cars, heat pumps, water plants, farms, data centers, and factories can all become much cleaner too.</p>
+              <div class="solution-list" data-meter="energy">
+                <button class="solution" data-points="20"><h4>☀️ Build lots of solar</h4><p>Solar panels can go on rooftops, parking lots, farms, deserts, and community projects.</p></button>
+                <button class="solution" data-points="18"><h4>🌬️ Expand wind power</h4><p>Wind turbines on land and offshore can produce large amounts of electricity, especially with better grids.</p></button>
+                <button class="solution" data-points="16"><h4>🔋 Store energy</h4><p>Batteries, pumped hydro, thermal storage, and other tools can save clean power for later.</p></button>
+                <button class="solution" data-points="16"><h4>🧭 Upgrade the grid</h4><p>More transmission lines and smarter controls help move clean electricity from where it is made to where it is needed.</p></button>
+                <button class="solution" data-points="14"><h4>🏠 Electrify buildings</h4><p>Heat pumps and induction stoves can replace fossil-fuel heating in many homes and schools.</p></button>
+                <button class="solution" data-points="16"><h4>🟢 Use clean fuels carefully</h4><p>Green hydrogen and synthetic fuels may help with steel, shipping, aviation, and backup power where batteries are not enough.</p></button>
+              </div>
+            </div>
+            <aside class="side-note" aria-live="polite">
+              <h3>Energy mission meter</h3>
+              <p>Click solution cards to build a cleaner power system.</p>
+              <div class="meter"><span id="energy-meter"></span></div>
+              <div class="meter-label"><span>Start</span><span id="energy-score">0%</span></div>
+              <p id="energy-note">Your grid still needs serious upgrades. Add clean power and storage!</p>
+            </aside>
+          </div>
+        </article>
+
+        <article class="mission-panel" id="agriculture-panel" role="tabpanel" aria-labelledby="agriculture-tab" data-panel="agriculture">
+          <div class="panel-layout">
+            <div>
+              <h3>Alternative Agriculture: food without frying the future</h3>
+              <p>Food systems release greenhouse gases through livestock, fertilizer, land clearing, energy use, and food waste. By 2070, the goal is a food system that feeds everyone, protects nature, and wastes far less.</p>
+              <div class="solution-list" data-meter="agriculture">
+                <button class="solution" data-points="18"><h4>🛰️ Precision farming</h4><p>Sensors, satellites, and better planning can apply water and fertilizer only where crops need them.</p></button>
+                <button class="solution" data-points="16"><h4>🌾 Soil-building farming</h4><p>Cover crops, compost, reduced tillage, and agroforestry can protect soil and sometimes store more carbon.</p></button>
+                <button class="solution" data-points="20"><h4>🍄 Alternative proteins</h4><p>Plant-based foods, fermentation-made proteins, and maybe cultivated meat can reduce land and water pressure if powered cleanly.</p></button>
+                <button class="solution" data-points="18"><h4>🗑️ Cut food waste</h4><p>Better storage, labels, school lunch planning, and composting keep food from becoming methane in landfills.</p></button>
+                <button class="solution" data-points="14"><h4>🐄 Reduce livestock methane</h4><p>Improved feed, herd health, manure digesters, and methane-cutting additives can reduce emissions from animals.</p></button>
+                <button class="solution" data-points="14"><h4>💧 Grow with less water</h4><p>Drip irrigation, drought-ready crops, recycled water, and indoor farming can lower water stress in the right places.</p></button>
+              </div>
+            </div>
+            <aside class="side-note" aria-live="polite">
+              <h3>Agriculture mission meter</h3>
+              <p>Click solution cards to build a smarter food system.</p>
+              <div class="meter"><span id="agriculture-meter"></span></div>
+              <div class="meter-label"><span>Start</span><span id="agriculture-score">0%</span></div>
+              <p id="agriculture-note">Your food system has room to grow. Add soil, protein, and waste solutions!</p>
+            </aside>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="timeline">
+      <div class="section-head">
+        <div>
+          <h2>Possible path to 2070</h2>
+          <p>These dates are not predictions. They are a realistic-style roadmap showing how today’s tools could grow if society invests, experiments, and cooperates.</p>
+        </div>
+      </div>
+      <div class="timeline">
+        <article class="time-card">
+          <div class="year">2020s</div>
+          <ul>
+            <li>Solar, wind, and batteries get cheaper and spread faster.</li>
+            <li>Cities test water reuse, leak detection, and biogas capture.</li>
+            <li>Food waste and alternative protein solutions become more visible.</li>
+          </ul>
+        </article>
+        <article class="time-card">
+          <div class="year">2030s</div>
+          <ul>
+            <li>More clean electricity powers cars, buildings, pumps, and factories.</li>
+            <li>Water utilities track methane and nitrous oxide more carefully.</li>
+            <li>Farmers get better tools for precise fertilizer and irrigation.</li>
+          </ul>
+        </article>
+        <article class="time-card">
+          <div class="year">2050s</div>
+          <ul>
+            <li>Many grids become mostly zero-carbon, with storage and flexible demand.</li>
+            <li>Wastewater plants act like resource recovery centers.</li>
+            <li>Diet choices, low-methane livestock, and waste cuts shrink food emissions.</li>
+          </ul>
+        </article>
+        <article class="time-card">
+          <div class="year">2070</div>
+          <ul>
+            <li>Clean power supports safe water, resilient farms, and electrified communities.</li>
+            <li>Wetlands, soils, and forests are treated like climate infrastructure.</li>
+            <li>Mitigation is built into everyday design, not treated as an extra.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="simulator">
+      <div class="section-head">
+        <div>
+          <h2>Future mix simulator</h2>
+          <p>Move the sliders to test how balanced action changes the future readiness score. A strong 2070 plan needs all three zones.</p>
+        </div>
+      </div>
+      <div class="simulator report-box">
+        <div>
+          <div class="slider-row">
+            <div class="slider-head"><label for="water-slider">Clean water upgrades</label><span class="slider-value" id="water-slider-value">50</span></div>
+            <input id="water-slider" type="range" min="0" max="100" value="50" />
+            <small>Leak repair, wastewater-to-energy, safe reuse, renewable-powered treatment, wetlands.</small>
+          </div>
+          <div class="slider-row">
+            <div class="slider-head"><label for="energy-slider">Renewable energy buildout</label><span class="slider-value" id="energy-slider-value">50</span></div>
+            <input id="energy-slider" type="range" min="0" max="100" value="50" />
+            <small>Solar, wind, storage, transmission, geothermal, electrification, clean fuels.</small>
+          </div>
+          <div class="slider-row">
+            <div class="slider-head"><label for="ag-slider">Alternative agriculture shift</label><span class="slider-value" id="ag-slider-value">50</span></div>
+            <input id="ag-slider" type="range" min="0" max="100" value="50" />
+            <small>Precision farming, soil health, alternative proteins, food waste cuts, low-methane livestock.</small>
+          </div>
+        </div>
+        <div class="score-card" aria-live="polite">
+          <div>Future readiness</div>
+          <div class="score-number" id="future-score">50</div>
+          <p id="future-message">Balanced start. Push more systems together to unlock the strongest future.</p>
+          <div class="badge-row" id="badge-row"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="myth-busters">
+      <div class="section-head">
+        <div>
+          <h2>Myth busters</h2>
+          <p>Open these if you like arguing with oversimplified internet comments.</p>
+        </div>
+      </div>
+      <details>
+        <summary>“Renewable energy cannot work because the sun does not always shine.”</summary>
+        <p>That is a real challenge, but not a deal-breaker. A reliable clean grid can mix solar, wind, geothermal, hydropower, storage, transmission lines, flexible demand, and backup power. The future grid is more like a team than a single superhero.</p>
+      </details>
+      <details>
+        <summary>“Clean water is only about adaptation, not mitigation.”</summary>
+        <p>Clean water is definitely about adaptation, because droughts and floods affect water safety. But it can also mitigate climate change by reducing energy use, capturing methane from wastewater, reusing water, and restoring carbon-storing wetlands.</p>
+      </details>
+      <details>
+        <summary>“Alternative agriculture means everyone must eat weird food.”</summary>
+        <p>Nope. It means more choices and less waste. Some people may choose plant-based or fermentation-made foods. Farmers may use better fertilizer timing, drought-resistant crops, improved animal feed, compost, agroforestry, or precision irrigation. It is a toolkit, not one menu.</p>
+      </details>
+      <details>
+        <summary>“Technology alone will fix everything.”</summary>
+        <p>Technology matters, but rules, fairness, funding, education, land rights, community trust, and smart habits matter too. A solar panel, a wetland, and a farm sensor all work better when people design systems around them.</p>
+      </details>
+    </section>
+
+    <section id="quiz">
+      <div class="section-head">
+        <div>
+          <h2>Mini quiz: Are you 2070-ready?</h2>
+          <p>Test what you remember. No grades, just climate bragging rights.</p>
+        </div>
+      </div>
+      <div class="quiz-card">
+        <div id="quiz-progress">Question 1 of 5</div>
+        <div class="question active" data-answer="1">
+          <h3>1. Which water solution can cut emissions and create useful energy?</h3>
+          <div class="answer-grid">
+            <button class="answer">Making water pipes smaller everywhere</button>
+            <button class="answer">Capturing methane from wastewater as biogas</button>
+            <button class="answer">Ignoring leaks until they are huge</button>
+            <button class="answer">Using only bottled water</button>
+          </div>
+        </div>
+        <div class="question" data-answer="2">
+          <h3>2. Why does renewable electricity help more than just the power sector?</h3>
+          <div class="answer-grid">
+            <button class="answer">It changes the color of power lines</button>
+            <button class="answer">It makes fossil fuels disappear automatically</button>
+            <button class="answer">It can power cars, buildings, farms, and water systems cleanly</button>
+            <button class="answer">It only works for phone chargers</button>
+          </div>
+        </div>
+        <div class="question" data-answer="0">
+          <h3>3. Which farming change can lower nitrous oxide from fertilizer?</h3>
+          <div class="answer-grid">
+            <button class="answer">Using the right fertilizer amount at the right time and place</button>
+            <button class="answer">Adding extra fertilizer just in case</button>
+            <button class="answer">Watering every field the same way forever</button>
+            <button class="answer">Throwing away more food</button>
+          </div>
+        </div>
+        <div class="question" data-answer="3">
+          <h3>4. What is a balanced 2070 climate strategy?</h3>
+          <div class="answer-grid">
+            <button class="answer">One invention that solves everything instantly</button>
+            <button class="answer">Only planting trees and doing nothing else</button>
+            <button class="answer">Waiting until 2069 to start</button>
+            <button class="answer">Combining clean energy, water reuse, ecosystem restoration, less waste, and better agriculture</button>
+          </div>
+        </div>
+        <div class="question" data-answer="1">
+          <h3>5. Why is reducing food waste a climate solution?</h3>
+          <div class="answer-grid">
+            <button class="answer">Because food waste is invisible</button>
+            <button class="answer">Because wasted food uses land, water, and energy, and can create methane in landfills</button>
+            <button class="answer">Because spoiled food tastes better</button>
+            <button class="answer">Because it means farms can stop growing food</button>
+          </div>
+        </div>
+        <div class="quiz-feedback" id="quiz-feedback" aria-live="polite"></div>
+        <div class="quiz-controls">
+          <button class="btn btn-secondary" id="prev-question">Back</button>
+          <button class="btn btn-primary" id="next-question">Next</button>
+          <button class="btn btn-ghost" id="reset-quiz">Restart quiz</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="media">
+      <div class="section-head">
+        <div>
+          <h2>Watch, click, and learn more</h2>
+          <p>These multimedia links make the topic easier to picture. They are outside this file, so they need internet access.</p>
+        </div>
+      </div>
+      <div class="media-grid">
+        <article class="media-card">
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/FcqQrfelYpE" title="NASA: A Tour of the Water Cycle" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="content">
+            <h3>NASA: A Tour of the Water Cycle</h3>
+            <p>Useful background for understanding why water systems are connected to climate.</p>
+            <a href="https://gpm.nasa.gov/education/videos/tour-water-cycle" target="_blank" rel="noopener">Open NASA resource</a>
+          </div>
+        </article>
+        <article class="media-card">
+          <div class="video-wrap">
+            <iframe src="https://www.youtube.com/embed/1kUE0BZtTRc" title="National Geographic: Renewable Energy 101" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="content">
+            <h3>National Geographic: Renewable Energy 101</h3>
+            <p>A quick visual introduction to solar, wind, hydropower, geothermal, and biomass.</p>
+            <a href="https://education.nationalgeographic.org/resource/climate-101-renewable-energy/" target="_blank" rel="noopener">Open NatGeo resource</a>
+          </div>
+        </article>
+        <article class="media-card">
+          <div class="content">
+            <h3>TED: The problem with food and climate</h3>
+            <p>Jonathan Foley explains how food connects to climate and what can be done about it.</p>
+            <a class="btn btn-secondary" href="https://www.ted.com/talks/jonathan_foley_the_problem_with_food_and_climate_and_how_to_fix_it" target="_blank" rel="noopener">Watch the TED Talk</a>
+          </div>
+          <div class="content">
+            <h3>NASA Climate Kids</h3>
+            <p>Games, articles, activities, and videos about climate science made for students.</p>
+            <a class="btn btn-ghost" href="https://science.nasa.gov/kids/earth/" target="_blank" rel="noopener">Explore NASA Kids</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="action-lab">
+      <div class="section-head">
+        <div>
+          <h2>Design your own 2070 city</h2>
+          <p>Pick one idea from each category and write a tiny city plan.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <h3>City name: <input id="city-name" aria-label="City name" placeholder="Example: New Aquapolis" style="max-width: 340px; width: 100%; padding:.6rem .8rem; border-radius: 12px; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); color:white;" /></h3>
+        <p id="city-plan">Your city plan will appear here after you choose slider levels and type a name.</p>
+        <button class="btn btn-primary" id="make-plan">Generate city plan</button>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-head">
+        <div>
+          <h2>Source vault</h2>
+          <p>This report uses science and education sources. Click them to investigate like a real researcher.</p>
+        </div>
+      </div>
+      <div class="report-box">
+        <div class="source-grid">
+          <a class="source-link" href="https://www.ipcc.ch/report/ar6/wg3/" target="_blank" rel="noopener">IPCC: Mitigation of Climate Change <span>Global scientific assessment of climate mitigation options.</span></a>
+          <a class="source-link" href="https://www.iea.org/reports/net-zero-by-2050" target="_blank" rel="noopener">IEA: Net Zero by 2050 <span>Energy roadmap including renewables and electrification.</span></a>
+          <a class="source-link" href="https://www.iea.org/energy-system/renewables" target="_blank" rel="noopener">IEA: Renewables <span>Current overview of renewable power trends and challenges.</span></a>
+          <a class="source-link" href="https://www.unwater.org/water-facts/water-and-climate-change" target="_blank" rel="noopener">UN-Water: Water and Climate Change <span>How water management helps adaptation and mitigation.</span></a>
+          <a class="source-link" href="https://www.un.org/en/climatechange/science/climate-issues/water" target="_blank" rel="noopener">United Nations: Water and Climate <span>Climate risks to water and water-based solutions.</span></a>
+          <a class="source-link" href="https://www.epa.gov/system/files/documents/2024-04/us-ghg-inventory-2024-chapter-7-waste_04-17-2024.pdf" target="_blank" rel="noopener">EPA: Waste sector emissions inventory <span>Wastewater treatment and greenhouse gas emissions.</span></a>
+          <a class="source-link" href="https://www.worldbank.org/en/topic/climate-smart-agriculture" target="_blank" rel="noopener">World Bank: Climate-Smart Agriculture <span>Approach for food security, resilience, and emissions reduction.</span></a>
+          <a class="source-link" href="https://www.unep.org/topics/food-systems/food-loss-and-waste" target="_blank" rel="noopener">UNEP: Food loss and waste <span>Why food waste matters for climate and hunger.</span></a>
+          <a class="source-link" href="https://www.wri.org/food" target="_blank" rel="noopener">WRI: Sustainable Food Future <span>Research on feeding people while protecting climate and nature.</span></a>
+          <a class="source-link" href="https://drawdown.org/food-and-climate" target="_blank" rel="noopener">Project Drawdown: Food and Climate <span>Food-related climate solutions and practical actions.</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p><strong>Mission 2070 complete.</strong> The future is not something we wait for. It is something people design, test, argue about, improve, and build.</p>
+  </footer>
+
+  <script>
+    const tabButtons = [...document.querySelectorAll('.tab-btn')];
+    const panels = [...document.querySelectorAll('.mission-panel')];
+    function openTab(tabName) {
+      tabButtons.forEach(btn => {
+        const active = btn.dataset.tab === tabName;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panels.forEach(panel => panel.classList.toggle('active', panel.dataset.panel === tabName));
+    }
+    tabButtons.forEach(btn => btn.addEventListener('click', () => openTab(btn.dataset.tab)));
+    document.querySelectorAll('[data-open-tab]').forEach(link => {
+      link.addEventListener('click', () => setTimeout(() => openTab(link.dataset.openTab), 0));
+    });
+
+    const notes = {
+      water: [
+        [0, 'Your city is still leaky and fossil-powered. Start upgrading!'],
+        [35, 'Good start: your city is saving water and energy.'],
+        [70, 'Strong water system: reuse and methane capture are working.'],
+        [100, 'Water hero mode: clean, efficient, resilient, and low-carbon.']
+      ],
+      energy: [
+        [0, 'Your grid still needs serious upgrades. Add clean power and storage!'],
+        [35, 'Good start: renewable power is growing.'],
+        [70, 'Strong grid: storage and transmission are helping.'],
+        [100, 'Energy hero mode: clean power supports almost everything.']
+      ],
+      agriculture: [
+        [0, 'Your food system has room to grow. Add soil, protein, and waste solutions!'],
+        [35, 'Good start: farms are wasting less and measuring more.'],
+        [70, 'Strong food system: soils, diets, and precision tools are helping.'],
+        [100, 'Agriculture hero mode: climate-smart food is the normal option.']
+      ]
+    };
+
+    function updateMeter(type) {
+      const selected = [...document.querySelectorAll(`[data-meter="${type}"] .solution.selected`)];
+      const score = Math.min(100, selected.reduce((sum, el) => sum + Number(el.dataset.points), 0));
+      document.getElementById(`${type}-meter`).style.width = score + '%';
+      document.getElementById(`${type}-score`).textContent = score + '%';
+      const note = notes[type].reduce((current, item) => score >= item[0] ? item[1] : current, notes[type][0][1]);
+      document.getElementById(`${type}-note`).textContent = note;
+    }
+    document.querySelectorAll('.solution').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
+        updateMeter(btn.closest('.solution-list').dataset.meter);
+      });
+    });
+
+    const sliders = {
+      water: document.getElementById('water-slider'),
+      energy: document.getElementById('energy-slider'),
+      ag: document.getElementById('ag-slider')
+    };
+    const scoreEl = document.getElementById('future-score');
+    const messageEl = document.getElementById('future-message');
+    const badgeRow = document.getElementById('badge-row');
+    function updateFutureScore() {
+      const w = Number(sliders.water.value);
+      const e = Number(sliders.energy.value);
+      const a = Number(sliders.ag.value);
+      document.getElementById('water-slider-value').textContent = w;
+      document.getElementById('energy-slider-value').textContent = e;
+      document.getElementById('ag-slider-value').textContent = a;
+      const average = (w + e + a) / 3;
+      const balanceBonus = 100 - (Math.max(w, e, a) - Math.min(w, e, a));
+      const score = Math.round(average * 0.82 + balanceBonus * 0.18);
+      scoreEl.textContent = score;
+      let message = 'Balanced start. Push more systems together to unlock the strongest future.';
+      if (score < 35) message = 'Risky future: too many systems are underbuilt. Try raising all three sliders.';
+      else if (score < 65) message = 'Promising future: some systems are improving, but weak links remain.';
+      else if (score < 85) message = 'Strong future: clean power, water, and food systems are reinforcing each other.';
+      else message = 'Mission success: this is a resilient, low-carbon, 2070-ready strategy.';
+      messageEl.textContent = message;
+      const badges = [];
+      if (w >= 75) badges.push('💧 Water wizard');
+      if (e >= 75) badges.push('⚡ Grid builder');
+      if (a >= 75) badges.push('🌱 Food futurist');
+      if (Math.max(w,e,a) - Math.min(w,e,a) <= 15) badges.push('⚖️ Balanced planner');
+      if (score >= 85) badges.push('🏆 2070 architect');
+      badgeRow.innerHTML = badges.map(b => `<span class="badge">${b}</span>`).join('') || '<span class="badge">Move sliders to earn badges</span>';
+    }
+    Object.values(sliders).forEach(slider => slider.addEventListener('input', updateFutureScore));
+    updateFutureScore();
+
+    const questions = [...document.querySelectorAll('.question')];
+    const feedback = document.getElementById('quiz-feedback');
+    const progress = document.getElementById('quiz-progress');
+    const nextBtn = document.getElementById('next-question');
+    const prevBtn = document.getElementById('prev-question');
+    const resetBtn = document.getElementById('reset-quiz');
+    let currentQuestion = 0;
+    let quizScore = 0;
+    let answered = new Array(questions.length).fill(false);
+    function showQuestion(index) {
+      currentQuestion = Math.max(0, Math.min(index, questions.length - 1));
+      questions.forEach((q, i) => q.classList.toggle('active', i === currentQuestion));
+      progress.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+      feedback.textContent = answered[currentQuestion] ? feedback.textContent : '';
+      prevBtn.disabled = currentQuestion === 0;
+      nextBtn.textContent = currentQuestion === questions.length - 1 ? 'Finish' : 'Next';
+    }
+    questions.forEach((q, qi) => {
+      q.querySelectorAll('.answer').forEach((answer, ai) => {
+        answer.addEventListener('click', () => {
+          if (answered[qi]) return;
+          answered[qi] = true;
+          const correct = Number(q.dataset.answer);
+          if (ai === correct) {
+            answer.classList.add('correct');
+            quizScore++;
+            feedback.textContent = 'Correct! Nice climate detective work.';
+          } else {
+            answer.classList.add('wrong');
+            q.querySelectorAll('.answer')[correct].classList.add('correct');
+            feedback.textContent = 'Not quite. The green answer shows the strongest choice.';
+          }
+        });
+      });
+    });
+    nextBtn.addEventListener('click', () => {
+      if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+      else feedback.textContent = `Quiz complete: ${quizScore} out of ${questions.length}. ${quizScore >= 4 ? 'You are ready for the 2070 design team.' : 'Explore the mission zones again and try another run.'}`;
+    });
+    prevBtn.addEventListener('click', () => showQuestion(currentQuestion - 1));
+    resetBtn.addEventListener('click', () => {
+      quizScore = 0;
+      answered = new Array(questions.length).fill(false);
+      questions.forEach(q => q.querySelectorAll('.answer').forEach(a => a.classList.remove('correct', 'wrong')));
+      feedback.textContent = '';
+      showQuestion(0);
+    });
+    showQuestion(0);
+
+    document.getElementById('make-plan').addEventListener('click', () => {
+      const name = document.getElementById('city-name').value.trim() || 'Futureville';
+      const w = Number(sliders.water.value);
+      const e = Number(sliders.energy.value);
+      const a = Number(sliders.ag.value);
+      const waterPhrase = w > 70 ? 'runs water plants on clean power, reuses wastewater safely, and protects wetlands' : w > 40 ? 'is starting to fix leaks and reuse more water' : 'needs a major water-system upgrade';
+      const energyPhrase = e > 70 ? 'uses a strong renewable grid with storage and smart demand' : e > 40 ? 'is adding solar, wind, and batteries but still has grid gaps' : 'still relies too much on fossil energy';
+      const agPhrase = a > 70 ? 'supports precision farms, low-waste food systems, and climate-friendly proteins' : a > 40 ? 'is improving fertilizer use and cutting some food waste' : 'needs a better food and farming plan';
+      document.getElementById('city-plan').textContent = `${name} ${waterPhrase}. It ${energyPhrase}. Its food system ${agPhrase}. The next step is to make the weakest category stronger, because a city is only as resilient as its most neglected system.`;
+    });
+
+    const navLinks = [...document.querySelectorAll('.nav a')];
+    const sections = navLinks.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id));
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+    sections.forEach(section => observer.observe(section));
+  </script>
+</body>
+</html>
