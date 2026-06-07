@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nathan's Unit 8 Data Displays Comeback Packet</title>
+<style>
+:root{
+  --bg:#f7f2e8;--card:#fffdf8;--ink:#17202a;--muted:#607083;
+  --blue:#2b6cb0;--green:#0f766e;--gold:#f59e0b;--red:#b42318;
+  --softblue:#eaf4ff;--softgreen:#eaf7ef;--softgold:#fff5d6;--softred:#fff0ed;
+}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{padding:28px 18px;background:linear-gradient(135deg,#fffdf8,#eaf4ff);border-bottom:1px solid #ddd}
+main{max-width:1050px;margin:auto;padding:18px}
+h1{font-size:clamp(2rem,5vw,4rem);line-height:1;margin:.2em 0} h2{margin-top:0}
+.tag{display:inline-block;background:var(--softgold);border:1px solid #f3d28a;border-radius:999px;padding:.35rem .7rem;font-weight:800;color:#7a4b00}
+nav{position:sticky;top:0;background:#fffaf0d9;backdrop-filter:blur(12px);border-bottom:1px solid #ddd;z-index:5}
+nav div{max-width:1050px;margin:auto;display:flex;gap:8px;flex-wrap:wrap;padding:10px 18px}
+nav a,button{border:0;border-radius:12px;padding:.65rem .85rem;font-weight:800}
+nav a{background:white;color:var(--ink);text-decoration:none;border:1px solid #ddd}
+button{background:var(--blue);color:white;cursor:pointer}
+button.secondary{background:#eef2ff;color:#263b70;border:1px solid #cad5ff}
+.card{background:var(--card);border:1px solid #ddd;border-radius:22px;box-shadow:0 8px 25px #0001;padding:18px;margin:16px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.note{background:var(--softgold);border:1px solid #f3d28a;border-radius:16px;padding:12px}
+.good{background:var(--softgreen);border:1px solid #9ed8b8;color:#075a31}.bad{background:var(--softred);border:1px solid #f3b0a5;color:#7d1a14}
+.feedback{display:none;border-radius:14px;padding:12px;margin-top:10px}.feedback.show{display:block}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{background:#eef2ff;border-radius:999px;padding:.2rem .55rem;font-weight:800}
+table{width:100%;border-collapse:collapse;background:white;border-radius:14px;overflow:hidden}td,th{border:1px solid #ddd;padding:8px;text-align:center}
+input,select{border:1px solid #bbb;border-radius:10px;padding:.5rem;font:inherit}input[type=number]{width:70px;text-align:center;font-weight:800}
+.bars{height:240px;display:flex;align-items:end;border-left:3px solid #333;border-bottom:3px solid #333;background:white;padding:10px 8px 0;margin-top:12px}
+.barwrap{flex:1;text-align:center}.bar{margin:auto;background:#77a9dd;border:1px solid #333;width:100%;max-width:95px;min-height:1px}
+.barlabel{font-size:.82rem;font-weight:800;margin-top:6px}.barcount{font-size:.8rem;font-weight:900}
+.choice{border:2px solid #ddd;background:white;border-radius:18px;padding:14px;cursor:pointer}.choice:hover{transform:translateY(-2px)}
+.choice.correct{border-color:#64ba8a;background:var(--softgreen)}.choice.wrong{border-color:#e18b7d;background:var(--softred)}
+.quiz button{display:block;width:100%;text-align:left;background:#f7f9fc;color:var(--ink);border:1px solid #ddd;margin:6px 0}
+.quiz button.correct{background:var(--softgreen);border-color:#64ba8a}.quiz button.wrong{background:var(--softred);border-color:#e18b7d}
+.progress{height:14px;background:#ddd;border-radius:999px;overflow:hidden;flex:1;min-width:150px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green),var(--gold))}
+.small{color:var(--muted);font-size:.95rem}.formula{font-weight:900;background:#f3f4f6;padding:.5rem;border-radius:10px;display:inline-block}
+@media(max-width:780px){.grid,.grid3{grid-template-columns:1fr}nav div{display:block}nav a,nav button{display:inline-block;margin:3px 0}.progress{margin:8px 0}}
+@media print{nav,button{display:none}.card{box-shadow:none;break-inside:avoid}body{background:white}}
+</style>
+</head>
+<body>
+<header>
+  <span class="tag">Unit 8 Data Displays Comeback Packet</span>
+  <h1>Make the missed points feel easy.</h1>
+  <p>This page practices three skills: building a true histogram, explaining why exact mean is not possible from grouped displays, and choosing IQR for skewed data.</p>
+</header>
+
+<nav>
+  <div>
+    <a href="#hist">Histogram Lab</a>
+    <a href="#mean">Exact Mean Detective</a>
+    <a href="#iqr">IQR Lab</a>
+    <a href="#quiz">Practice Quiz</a>
+    <span class="small"><b id="scoreText">0/7 skills</b></span>
+    <span class="progress"><span id="progress"></span></span>
+    <button class="secondary" onclick="resetAll()">Reset</button>
+  </div>
+</nav>
+
+<main>
+<section class="card" id="hist">
+  <h2>Mission 1: Build a real histogram</h2>
+  <div class="note"><b>Rule:</b> A histogram groups numerical data into equal-width intervals. The x-axis shows ranges like 0–19 and 20–39. Bars touch.</div>
+
+  <div class="grid">
+    <div>
+      <h3>Flower-height data</h3>
+      <p class="small">Heights in centimeters:</p>
+      <div class="chips">
+        <span class="chip">5</span><span class="chip">5</span><span class="chip">10</span><span class="chip">10</span><span class="chip">15</span>
+        <span class="chip">25</span><span class="chip">25</span><span class="chip">25</span><span class="chip">25</span>
+        <span class="chip">30</span><span class="chip">30</span><span class="chip">35</span>
+        <span class="chip">45</span><span class="chip">45</span><span class="chip">50</span><span class="chip">55</span>
+        <span class="chip">65</span><span class="chip">70</span><span class="chip">105</span><span class="chip">110</span>
+      </div>
+
+      <h3>Count each interval</h3>
+      <table>
+        <tr><th>Bin</th><th>Your count</th></tr>
+        <tr><td>0–19</td><td><input class="bin" type="number"></td></tr>
+        <tr><td>20–39</td><td><input class="bin" type="number"></td></tr>
+        <tr><td>40–59</td><td><input class="bin" type="number"></td></tr>
+        <tr><td>60–79</td><td><input class="bin" type="number"></td></tr>
+        <tr><td>80–99</td><td><input class="bin" type="number"></td></tr>
+        <tr><td>100–119</td><td><input class="bin" type="number"></td></tr>
+      </table>
+      <button onclick="checkBins()">Check histogram counts</button>
+      <button class="secondary" onclick="showBins()">Show answer</button>
+      <div class="feedback" id="binfb"></div>
+    </div>
+
+    <div>
+      <h3>Your histogram</h3>
+      <p class="small">The bars below update from your table.</p>
+      <div class="bars" id="bars"></div>
+      <p class="small"><b>Correct counts:</b> 0–19 = 5, 20–39 = 7, 40–59 = 4, 60–79 = 2, 80–99 = 0, 100–119 = 2.</p>
+    </div>
+  </div>
+
+  <h3>Quick check</h3>
+  <div class="grid">
+    <div class="choice" onclick="spot(this,false)">
+      <b>A.</b> Bars above individual values: 5, 10, 15, 25, 30...
+    </div>
+    <div class="choice" onclick="spot(this,true)">
+      <b>B.</b> Touching bars for intervals: 0–19, 20–39, 40–59...
+    </div>
+  </div>
+  <div class="feedback" id="spotfb"></div>
+</section>
+
+<section class="card" id="mean">
+  <h2>Mission 2: Exact mean or estimate?</h2>
+  <div class="note"><b>Exact mean rule:</b> To find an exact mean, you need every exact data value. A grouped histogram and a box plot do not give all exact values.</div>
+
+  <div class="grid">
+    <div>
+      <h3>Can you find the exact mean?</h3>
+      <table>
+        <tr><th>Display</th><th>Exact mean?</th><th>Why?</th></tr>
+        <tr><td>Raw list</td><td>Yes</td><td>All values are shown.</td></tr>
+        <tr><td>Dot plot</td><td>Yes</td><td>Each dot shows a value.</td></tr>
+        <tr><td>Exact frequency table</td><td>Yes</td><td>Values and counts are shown.</td></tr>
+        <tr><td>Box plot</td><td>No</td><td>Only min, Q1, median, Q3, max.</td></tr>
+        <tr><td>Grouped histogram</td><td>No</td><td>Only interval counts.</td></tr>
+      </table>
+    </div>
+
+    <div>
+      <h3>Full-credit explanation builder</h3>
+      <p>No, she cannot find the exact mean because the histogram shows how many values are in each
+        <select id="b1"><option></option><option>interval</option><option>exact value</option></select>,
+        not the exact values. The box plot shows only the
+        <select id="b2"><option></option><option>mean</option><option>five-number summary</option></select>,
+        not
+        <select id="b3"><option></option><option>all data values</option><option>the tallest bar</option></select>.
+      </p>
+      <button onclick="checkBlanks()">Check sentence</button>
+      <div class="feedback" id="blankfb"></div>
+    </div>
+  </div>
+
+  <h3>Detective cards</h3>
+  <div class="grid3">
+    <div class="choice" onclick="exactCard(this,true)"><b>Raw list:</b><br>4, 5, 6, 6, 7, 9</div>
+    <div class="choice" onclick="exactCard(this,false)"><b>Box plot only:</b><br>Min 0, Q1 2, Median 5, Q3 10, Max 26</div>
+    <div class="choice" onclick="exactCard(this,false)"><b>Grouped histogram:</b><br>0–4: 40 students, 5–9: 30 students</div>
+  </div>
+  <div class="feedback" id="exactfb"></div>
+</section>
+
+<section class="card" id="iqr">
+  <h2>Mission 3: Use IQR when data are skewed</h2>
+  <div class="note"><b>Rule:</b> For skewed data or outliers, use <b>median</b> for center and <b>IQR</b> for variability. Range can be pulled by the extreme value.</div>
+
+  <div class="grid">
+    <div>
+      <h3>TV-watching box plot facts</h3>
+      <p>From the box plot: Q1 = 2 and Q3 = 10.</p>
+      <p class="formula">IQR = Q3 − Q1 = 10 − 2 = 8 hours</p>
+
+      <h3>Compute it yourself</h3>
+      <p>Q1: <input id="q1" type="number"> Q3: <input id="q3" type="number"> IQR: <input id="iqrval" type="number"></p>
+      <button onclick="checkIQR()">Check IQR</button>
+      <div class="feedback" id="iqrfb"></div>
+    </div>
+
+    <div>
+      <h3>Outlier slider</h3>
+      <p>Move the maximum. Watch range change while IQR stays 8.</p>
+      <input id="maxslider" type="range" min="12" max="30" value="26" oninput="sliderUpdate()">
+      <p><b>Maximum:</b> <span id="maxv">26</span> hours</p>
+      <p><b>Range:</b> <span id="rangev">26</span> hours</p>
+      <p><b>IQR:</b> 8 hours</p>
+      <div class="feedback show good">This is why “v = 26” was range, not the best variability measure for the skewed data.</div>
+    </div>
+  </div>
+
+  <h3>Best measure check</h3>
+  <div class="quiz">
+    <button onclick="measure(this,false)">Mean and range</button>
+    <button onclick="measure(this,true)">Median and IQR</button>
+    <button onclick="measure(this,false)">Mode and range</button>
+  </div>
+  <div class="feedback" id="measurefb"></div>
+</section>
+
+<section class="card" id="quiz">
+  <h2>Practice Quiz: 8 quick points</h2>
+  <p>Try to get 7 or 8. Each question gives feedback.</p>
+
+  <div class="quiz">
+    <div data-answer="5">
+      <h3>1. How many flower heights are in the 0–19 bin?</h3>
+      <input type="number"> <button onclick="numQuiz(this)">Check</button><div class="feedback"></div>
+    </div>
+
+    <div data-answer="7">
+      <h3>2. How many flower heights are in the 20–39 bin?</h3>
+      <input type="number"> <button onclick="numQuiz(this)">Check</button><div class="feedback"></div>
+    </div>
+
+    <div data-answer="b">
+      <h3>3. Which x-axis labels belong on a histogram?</h3>
+      <button onclick="choiceQuiz(this,'a')">5, 10, 15, 20, 25</button>
+      <button onclick="choiceQuiz(this,'b')">0–19, 20–39, 40–59</button>
+      <button onclick="choiceQuiz(this,'c')">soda, chips, candy</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div data-answer="c">
+      <h3>4. Can you find the exact mean from a grouped histogram?</h3>
+      <button onclick="choiceQuiz(this,'a')">Yes, always</button>
+      <button onclick="choiceQuiz(this,'b')">Yes, because the tallest bar is the mean</button>
+      <button onclick="choiceQuiz(this,'c')">No, because exact values inside each interval are unknown</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div data-answer="a">
+      <h3>5. Why can’t a box plot usually give the exact mean?</h3>
+      <button onclick="choiceQuiz(this,'a')">It does not show all data values</button>
+      <button onclick="choiceQuiz(this,'b')">It never shows the median</button>
+      <button onclick="choiceQuiz(this,'c')">It only works for categories</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div data-answer="b">
+      <h3>6. Data are skewed right. Best measure of variability?</h3>
+      <button onclick="choiceQuiz(this,'a')">Range</button>
+      <button onclick="choiceQuiz(this,'b')">IQR</button>
+      <button onclick="choiceQuiz(this,'c')">Mean</button>
+      <div class="feedback"></div>
+    </div>
+
+    <div data-answer="9">
+      <h3>7. Q1 = 4 and Q3 = 13. What is the IQR?</h3>
+      <input type="number"> <button onclick="numQuiz(this)">Check</button><div class="feedback"></div>
+    </div>
+
+    <div data-answer="c">
+      <h3>8. Max = 26 and min = 0, so 26 − 0 = 26. What measure is this?</h3>
+      <button onclick="choiceQuiz(this,'a')">Mean</button>
+      <button onclick="choiceQuiz(this,'b')">IQR</button>
+      <button onclick="choiceQuiz(this,'c')">Range</button>
+      <div class="feedback"></div>
+    </div>
+  </div>
+
+  <button onclick="finalScore()">Score quiz</button>
+  <div class="feedback show" id="finalfb">Quiz score: 0/8</div>
+</section>
+
+<section class="card">
+  <h2>Memory sheet</h2>
+  <div class="grid3">
+    <div class="note"><b>Histogram</b><br>Use equal-width numerical intervals. Bars touch.</div>
+    <div class="note"><b>Exact mean</b><br>Needs all exact values. Box plots and grouped histograms usually are not enough.</div>
+    <div class="note"><b>IQR</b><br>IQR = Q3 − Q1. Use it for skewed data or outliers.</div>
+  </div>
+  <h3>Full-credit sentence to memorize</h3>
+  <p><b>Exact mean:</b> “No. The histogram only shows how many values are in each interval, not the exact values. The box plot shows a five-number summary, not all data values.”</p>
+  <p><b>Variability:</b> “Because the data are skewed right, IQR is appropriate. IQR = Q3 − Q1 = 10 − 2 = 8 hours.”</p>
+</section>
+</main>
+
+<script>
+const correctBins=[5,7,4,2,0,2], labels=["0–19","20–39","40–59","60–79","80–99","100–119"];
+let skills=new Set(), quiz=new Set();
+
+function saveSkill(x){skills.add(x);updateProgress()}
+function updateProgress(){
+  document.getElementById("scoreText").textContent=skills.size+"/7 skills";
+  document.getElementById("progress").style.width=(skills.size/7*100)+"%";
+}
+function resetAll(){localStorage.clear();location.reload()}
+
+function drawBars(vals){
+  const box=document.getElementById("bars"); box.innerHTML="";
+  vals.forEach((v,i)=>{
+    const wrap=document.createElement("div");wrap.className="barwrap";
+    wrap.innerHTML=`<div class="barcount">${v||""}</div><div class="bar" style="height:${(v/7)*185}px"></div><div class="barlabel">${labels[i]}</div>`;
+    box.appendChild(wrap);
+  });
+}
+drawBars([0,0,0,0,0,0]);
+
+document.querySelectorAll(".bin").forEach(i=>i.addEventListener("input",()=>{
+  drawBars([...document.querySelectorAll(".bin")].map(x=>Number(x.value)||0));
+}));
+
+function fb(id,ok,msg){const e=document.getElementById(id);e.className="feedback show "+(ok?"good":"bad");e.innerHTML=msg}
+function checkBins(){
+  const vals=[...document.querySelectorAll(".bin")].map(x=>Number(x.value)||0);
+  const ok=vals.every((v,i)=>v===correctBins[i]);
+  drawBars(vals);
+  if(ok){fb("binfb",true,"<b>Correct.</b> You counted all 20 flowers into interval bins, including 105 and 110 in 100–119.");saveSkill("bins")}
+  else fb("binfb",false,"Not yet. Recount each value into exactly one interval. The total should be 20.");
+}
+function showBins(){document.querySelectorAll(".bin").forEach((x,i)=>x.value=correctBins[i]);drawBars(correctBins);fb("binfb",true,"Answer shown: 5, 7, 4, 2, 0, 2.")}
+function spot(el,ok){
+  document.querySelectorAll("#hist .choice").forEach(x=>x.classList.remove("correct","wrong"));
+  el.classList.add(ok?"correct":"wrong");
+  fb("spotfb",ok,ok?"Correct: histograms use interval labels and touching bars.":"Not quite: individual values are not interval bins.");
+  if(ok)saveSkill("spot");
+}
+function checkBlanks(){
+  const ok=b1.value==="interval"&&b2.value==="five-number summary"&&b3.value==="all data values";
+  fb("blankfb",ok,ok?"Full-credit explanation. It answers both no and why.":"Try again: histogram = intervals; box plot = five-number summary; exact mean needs all values.");
+  if(ok)saveSkill("blanks");
+}
+let exactCorrect=0;
+function exactCard(el,ok){
+  el.classList.remove("correct","wrong"); el.classList.add(ok?"correct":"wrong");
+  fb("exactfb",ok,ok?"Yes: this display gives all exact values.":"Correct if you chose no: this display summarizes or groups values, so exact mean is not guaranteed.");
+  exactCorrect++; if(exactCorrect>=3)saveSkill("exact");
+}
+function sliderUpdate(){
+  maxv.textContent=maxslider.value; rangev.textContent=maxslider.value; saveSkill("slider");
+}
+function checkIQR(){
+  const ok=Number(q1.value)===2&&Number(q3.value)===10&&Number(iqrval.value)===8;
+  fb("iqrfb",ok,ok?"Correct: IQR = 10 − 2 = 8.":"Use Q3 − Q1. Here Q3 = 10 and Q1 = 2.");
+  if(ok)saveSkill("iqr");
+}
+function measure(el,ok){
+  el.classList.add(ok?"correct":"wrong");
+  fb("measurefb",ok,ok?"Correct: skewed data → median and IQR.":"Try again: range is pulled by the farthest value; use IQR.");
+  if(ok)saveSkill("measure");
+}
+
+function numQuiz(btn){
+  const d=btn.parentElement, ans=Number(d.dataset.answer), val=Number(d.querySelector("input").value), ok=val===ans;
+  const f=d.querySelector(".feedback"); f.className="feedback show "+(ok?"good":"bad"); f.innerHTML=ok?"Correct.":"Not yet.";
+  if(ok)quiz.add([...document.querySelectorAll(".quiz > div")].indexOf(d));
+}
+function choiceQuiz(btn,choice){
+  const d=btn.parentElement, ok=choice===d.dataset.answer;
+  d.querySelectorAll("button").forEach(b=>b.classList.remove("correct","wrong"));
+  btn.classList.add(ok?"correct":"wrong");
+  const f=d.querySelector(".feedback"); f.className="feedback show "+(ok?"good":"bad"); f.innerHTML=ok?"Correct.":"Review the rule and try the next one.";
+  if(ok)quiz.add([...document.querySelectorAll(".quiz > div")].indexOf(d));
+}
+function finalScore(){
+  const n=quiz.size;
+  finalfb.className="feedback show "+(n>=7?"good":"bad");
+  finalfb.innerHTML=`Quiz score: <b>${n}/8</b>. ${n>=7?"Mastery level — nice work.":"Aim for 7 or 8. Rework the red questions."}`;
+  if(n>=7)saveSkill("quiz");
+}
+</script>
+</body>
+</html>
